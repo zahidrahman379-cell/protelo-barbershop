@@ -400,18 +400,72 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle Contact Form Submission
+    // --- HANDLE CONTACT FORM SUBMISSION (SUPABASE + EMAILJS) ---
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (bookingModal) bookingModal.classList.add('active');
+            if (!supabaseClient) {
+                alert('Database connection not available.');
+                return;
+            }
+
+            const nameInput = document.getElementById('contactName') || contactForm.querySelector('[name="name"]');
+            const emailInput = document.getElementById('contactEmail') || contactForm.querySelector('[name="email"]');
+            const phoneInput = document.getElementById('contactPhone') || contactForm.querySelector('[name="phone"]');
+            const messageInput = document.getElementById('contactMessage') || contactForm.querySelector('[name="message"]');
+
+            const name = nameInput ? nameInput.value : '';
+            const email = emailInput ? emailInput.value : '';
+            const phone = phoneInput ? phoneInput.value : '';
+            const message = messageInput ? messageInput.value : '';
+
+            const submitContactBtn = contactForm.querySelector('button[type="submit"]');
+            if (submitContactBtn) {
+                submitContactBtn.disabled = true;
+                submitContactBtn.textContent = 'Sending Message...';
+            }
+
+            const serviceID = 'service_t5n9il9';
+            const contactTemplateID = 'template_tk49v6w'; // Reusing or custom contact template ID
+
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                phone: phone,
+                message: message
+            };
+
+            try {
+                // 1. Save to Supabase protelo_contacts table
+                const { error: dbError } = await supabaseClient
+                    .from('protelo_contacts')
+                    .insert([{ name, email, phone, message }]);
+
+                if (dbError) throw dbError;
+
+                // 2. Send via EmailJS
+                if (typeof emailjs !== 'undefined') {
+                    await emailjs.send(serviceID, contactTemplateID, templateParams);
+                }
+
+                alert('Your message has been sent successfully and saved!');
+                contactForm.reset();
+            } catch (err) {
+                console.error('Error submitting contact form:', err);
+                alert('Failed to send message. Please check your network or database configuration.');
+            } finally {
+                if (submitContactBtn) {
+                    submitContactBtn.disabled = false;
+                    submitContactBtn.textContent = 'Send Message';
+                }
+            }
         });
     }
 
-    // Modal Closing & Redirection to menu.html
+    // Modal Closing & Redirection to index.html
     const hideModal = () => {
         if (bookingModal) bookingModal.classList.remove('active');
-        window.location.href = 'menu.html';
+        window.location.href = 'index.html';
     };
 
     if (closeModal) closeModal.addEventListener('click', hideModal);
