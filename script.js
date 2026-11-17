@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch all bookings from Supabase safely
     const loadBookingsAndRefreshUI = async (callback) => {
-        if (!supabaseClient) return; // Exit safely if Supabase isn't loaded on this page
+        if (!supabaseClient) return;
 
         const { data, error } = await supabaseClient
             .from('protelo_bookings')
@@ -400,24 +400,29 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- HANDLE CONTACT FORM SUBMISSION (SUPABASE + EMAILJS) ---
+    // --- HANDLE CONTACT FORM SUBMISSION (WITH DEBUG LOGS) ---
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            console.log("1. Contact form submitted!");
+
             if (!supabaseClient) {
+                console.error("Supabase client is null!");
                 alert('Database connection not available.');
                 return;
             }
 
-            const nameInput = document.getElementById('contactName') || contactForm.querySelector('[name="name"]');
-            const emailInput = document.getElementById('contactEmail') || contactForm.querySelector('[name="email"]');
-            const phoneInput = document.getElementById('contactPhone') || contactForm.querySelector('[name="phone"]');
-            const messageInput = document.getElementById('contactMessage') || contactForm.querySelector('[name="message"]');
+            const nameInput = document.getElementById('contactName');
+            const emailInput = document.getElementById('contactEmail');
+            const subjectInput = document.getElementById('contactSubject');
+            const messageInput = document.getElementById('contactMessage');
 
             const name = nameInput ? nameInput.value : '';
             const email = emailInput ? emailInput.value : '';
-            const phone = phoneInput ? phoneInput.value : '';
+            const subject = subjectInput ? subjectInput.value : '';
             const message = messageInput ? messageInput.value : '';
+
+            console.log("2. Form values captured:", { name, email, subject, message });
 
             const submitContactBtn = contactForm.querySelector('button[type="submit"]');
             if (submitContactBtn) {
@@ -426,33 +431,40 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const serviceID = 'service_t5n9il9';
-            const contactTemplateID = 'template_tk49v6w'; // Reusing or custom contact template ID
+            const contactTemplateID = 'template_tk49v6w';
 
             const templateParams = {
                 from_name: name,
                 from_email: email,
-                phone: phone,
+                subject: subject,
                 message: message
             };
 
             try {
                 // 1. Save to Supabase protelo_contacts table
-                const { error: dbError } = await supabaseClient
+                const { data: dbData, error: dbError } = await supabaseClient
                     .from('protelo_contacts')
-                    .insert([{ name, email, phone, message }]);
+                    .insert([{ name, email, subject, message }]);
 
-                if (dbError) throw dbError;
+                if (dbError) {
+                    console.error("Supabase Error Details:", dbError);
+                    throw dbError;
+                }
+                console.log("3. Saved to Supabase successfully!", dbData);
 
                 // 2. Send via EmailJS
                 if (typeof emailjs !== 'undefined') {
-                    await emailjs.send(serviceID, contactTemplateID, templateParams);
+                    const emailResponse = await emailjs.send(serviceID, contactTemplateID, templateParams);
+                    console.log("4. EmailJS sent successfully!", emailResponse);
+                } else {
+                    console.warn("EmailJS is undefined!");
                 }
 
-                alert('Your message has been sent successfully and saved!');
+                if (bookingModal) bookingModal.classList.add('active');
                 contactForm.reset();
             } catch (err) {
-                console.error('Error submitting contact form:', err);
-                alert('Failed to send message. Please check your network or database configuration.');
+                console.error('Caught error during submission:', err);
+                alert('Failed to send message. Check console for details.');
             } finally {
                 if (submitContactBtn) {
                     submitContactBtn.disabled = false;
