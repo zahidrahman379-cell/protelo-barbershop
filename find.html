@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Us | PROTELO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="index.html" class="brand">
+                <svg class="brand-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 48L46 14C48.5 11.5 52.5 11.5 55 14C57.5 16.5 57.5 20.5 55 23L21 57C18.5 59.5 14.5 59.5 12 57C9.5 54.5 9.5 50.5 12 48Z" stroke="#C59B27" stroke-width="2.5"/>
+                    <path d="M16 44L42 18" stroke="#C59B27" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <path d="M48 16L14 50" stroke="#F4EFE6" stroke-width="1.5"/>
+                    <circle cx="16.5" cy="52.5" r="2" fill="#C59B27"/>
+                    <path d="M8 20L24 36M20 8L36 24" stroke="#C59B27" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <div class="brand-text">
+                    <span class="brand-name">PROTELO</span>
+                    <span class="brand-sub">EST. MCMXXIV</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="menu.html">Main Menu</a>
+                <a href="book.html">Book Chair</a>
+                <a href="find.html" class="active">Find Us</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Find Us Page Content -->
+    <section class="section page-content">
+        <div class="container">
+            <div class="section-header center">
+                <span class="section-eyebrow">PARLOR LOCATION</span>
+                <h2 class="section-title">Visit Our Sanctuary</h2>
+                <div class="gold-divider"><span>✦</span></div>
+                <p class="section-desc">Conveniently located and ready to welcome you for your next cut or shave.</p>
+            </div>
+
+            <div class="find-grid">
+                <div class="find-info-box">
+                    <h3>Protelo Barbershop &amp; Apothecary</h3>
+                    <div class="gold-divider"><span>✦</span></div>
+                    <p><strong>Hours of Operation:</strong><br>
+                       Tuesday – Friday: 09:00 – 20:00<br>
+                       Saturday: 09:00 – 18:00<br>
+                       Sunday &amp; Monday: Closed
+                    </p>
+                    <p><strong>Parking &amp; Transit:</strong><br>Complimentary valet parking available in the rear courtyard. Direct access via local transit lines.</p>
+                    <a href="book.html" class="btn btn-gold" style="margin-top: 1rem;">Book an Appointment</a>
+                </div>
+
+                <!-- Real Interactive Google Map -->
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d798.1566453350787!2d13.070849298243086!3d55.54059196588863!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4653a030f2054db9%3A0xff9e0c44a60376d2!2sUGzDpXR0asOkbnN0IEFC!5e0!3m2!1sen!2sse!4v1794576577510!5m2!1sen!2sse" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <span class="brand-name">PROTELO</span>
+                <p class="footer-tagline">Classic Barbershop &amp; Apothecary.<br>Craftsmanship without compromise.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Parlor Hours</h4>
+                <ul class="hours-list">
+                    <li><span>Tuesday – Friday</span> <span>09:00 – 20:00</span></li>
+                    <li><span>Saturday</span> <span>09:00 – 18:00</span></li>
+                    <li><span>Sunday – Monday</span> <span>Closed</span></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <p><a href="menu.html">Main Menu</a><br>
+                   <a href="book.html">Book Chair</a><br>
+                   <a href="find.html">Find Us</a><br>
+                   <a href="contact.html">Contact</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; <span id="currentYear"></span> PROTELO BARBERSHOP. ALL RIGHTS RESERVED.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

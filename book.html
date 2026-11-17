@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Chair | PROTELO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+       (function(){
+          emailjs.init({
+            publicKey: "ZcWQ5aFp-sikbld__",
+          });
+       })();
+    </script>
+<!-- Supabase UMD Browser Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="menu.html" class="brand">
+                <svg class="brand-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 48L46 14C48.5 11.5 52.5 11.5 55 14C57.5 16.5 57.5 20.5 55 23L21 57C18.5 59.5 14.5 59.5 12 57C9.5 54.5 9.5 50.5 12 48Z" stroke="#C59B27" stroke-width="2.5"/>
+                    <path d="M16 44L42 18" stroke="#C59B27" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <path d="M48 16L14 50" stroke="#F4EFE6" stroke-width="1.5"/>
+                    <circle cx="16.5" cy="52.5" r="2" fill="#C59B27"/>
+                    <path d="M8 20L24 36M20 8L36 24" stroke="#C59B27" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <div class="brand-text">
+                    <span class="brand-name">PROTELO</span>
+                    <span class="brand-sub">EST. MCMXXIV</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="menu.html">Main Menu</a>
+                <a href="book.html" class="active">Book Chair</a>
+                <a href="find.html">Find Us</a>
+                <a href="contact.html">Contact</a>
+            </nav>
+
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Booking Page Content -->
+    <section class="section page-content">
+        <div class="container" style="max-width: 700px;">
+            <div class="section-header center">
+                <span class="section-eyebrow">CONCIERGE RESERVATION</span>
+                <h2 class="section-title">Secure Your Chair</h2>
+                <div class="gold-divider"><span>✦</span></div>
+                <p class="section-desc">Select your preferred master barber, service, date, and available time slot below.</p>
+            </div>
+
+            <form class="booking-form" id="bookingForm">
+                <div class="form-group">
+                    <label for="clientName">Full Name</label>
+                    <input type="text" id="clientName" required placeholder="Lord Alistair">
+                </div>
+
+                <div class="form-group">
+                    <label for="clientEmail">Email Address</label>
+                    <input type="email" id="clientEmail" required placeholder="alistair@estate.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="selectBarber">Master Barber</label>
+                    <select id="selectBarber">
+                        <option value="Julian Vance">Julian Vance (Founder &amp; Master Barber)</option>
+                        <option value="Marcus Thorne">Marcus Thorne (Senior Barber &amp; Fade Specialist)</option>
+                        <option value="Arthur Pendelton">Arthur Pendelton (Traditional Shave Artisan)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="selectService">Select Service</label>
+                    <select id="selectService">
+                        <option value="Signature Cut - $45">The Protelo Signature Cut ($45)</option>
+                        <option value="Royal Hot Towel Shave - $45">Royal Hot Towel Shave ($45)</option>
+                        <option value="Grand Ritual - $80">The Grand Protelo Ritual ($80)</option>
+                        <option value="Beard Sculpt - $35">Beard Sculpt &amp; Razor Line ($35)</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookDate">Select Date</label>
+                        <input type="date" id="bookDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bookTime">Available Time Slots</label>
+                        <select id="bookTime" required>
+                            <!-- Populated dynamically by script.js -->
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBookingBtn" class="btn btn-gold" style="width: 100%; margin-top: 1rem;">Confirm Reservation</button>
+            </form>
+
+            <!-- Cancel / Manage Reservation -->
+            <div class="cancel-section" style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(197, 155, 39, 0.25);">
+                <div class="section-header center" style="margin-bottom: 1.5rem;">
+                    <span class="section-eyebrow">NEED TO RESCHEDULE?</span>
+                    <h3 style="font-family: 'Cinzel', serif; color: #F4EFE6; margin-top: 0.5rem;">Cancel a Reservation</h3>
+                </div>
+
+                <div class="form-row" style="align-items: flex-end;">
+                    <div class="form-group" style="margin-bottom: 0; flex: 1;">
+                        <label for="cancelEmail">Booking Email Address</label>
+                        <input type="email" id="cancelEmail" placeholder="alistair@estate.com">
+                    </div>
+                    <button type="button" id="findBookingBtn" class="btn btn-gold" style="height: 48px;">Find Booking</button>
+                </div>
+
+                <div id="cancelResults" style="margin-top: 1.25rem;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <span class="brand-name">PROTELO</span>
+                <p class="footer-tagline">Classic Barbershop &amp; Apothecary.<br>Craftsmanship without compromise.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Parlor Hours</h4>
+                <ul class="hours-list">
+                    <li><span>Tuesday – Friday</span> <span>09:00 – 20:00</span></li>
+                    <li><span>Saturday</span> <span>09:00 – 18:00</span></li>
+                    <li><span>Sunday – Monday</span> <span>Closed</span></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <p><a href="menu.html">Main Menu</a><br>
+                   <a href="book.html">Book Chair</a><br>
+                   <a href="find.html">Find Us</a><br>
+                   <a href="contact.html">Contact</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; <span id="currentYear"></span> PROTELO BARBERSHOP. ALL RIGHTS RESERVED.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal-backdrop" id="bookingModal" aria-hidden="true">
+        <div class="modal-box">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <span class="section-eyebrow">CONCIERGE CONFIRMATION</span>
+            <h3>Reservation Received</h3>
+            <div class="gold-divider"><span>✦</span></div>
+            <p id="modalMessage">Your chair has been reserved successfully. A confirmation has been dispatched.</p>
+            <button class="btn btn-gold" id="confirmModalBtn">Return to Main Menu</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

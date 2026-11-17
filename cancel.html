@@ -1,0 +1,365 @@
+/* =========================================
+   PROTELO CLASSIC BARBERSHOP - INTERACTIVITY
+   ========================================= */
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize EmailJS with your Public Key
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init({
+            publicKey: 'ZcWQ5aFp-sikbld__'
+        });
+    }
+
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+    const bookingForm = document.getElementById('bookingForm');
+    const contactForm = document.getElementById('contactForm');
+    const bookingModal = document.getElementById('bookingModal');
+    const closeModal = document.getElementById('closeModal');
+    const confirmModalBtn = document.getElementById('confirmModalBtn');
+
+    // Booking Elements
+    const selectBarber = document.getElementById('selectBarber');
+    const bookDate = document.getElementById('bookDate');
+    const bookTime = document.getElementById('bookTime');
+    const submitBookingBtn = document.getElementById('submitBookingBtn');
+
+    // Dedicated Cancel Page Elements
+    const cancelSearchForm = document.getElementById('cancelSearchForm');
+    const searchEmailInput = document.getElementById('searchEmailInput');
+    const cancelPageContent = document.getElementById('cancelPageContent');
+    const cancelSearchWrapper = document.getElementById('cancelSearchWrapper');
+
+    // Admin Elements
+    const adminBookingList = document.getElementById('adminBookingList');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+    const statTotalBookings = document.getElementById('statTotalBookings');
+    const statTodayBookings = document.getElementById('statTodayBookings');
+    const panelCount = document.getElementById('panelCount');
+
+    // All standard daily time slots
+    const ALL_TIME_SLOTS = [
+        { value: "09:00 AM", label: "09:00 AM" },
+        { value: "10:30 AM", label: "10:30 AM" },
+        { value: "12:00 PM", label: "12:00 PM" },
+        { value: "02:00 PM", label: "02:00 PM" },
+        { value: "04:00 PM", label: "04:00 PM" },
+        { value: "06:00 PM", label: "06:00 PM" }
+    ];
+
+    // Set copyright year
+    const yearEl = document.getElementById('currentYear');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+    // Mobile Navigation Toggle
+    if (mobileToggle && navLinks) {
+        mobileToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('open');
+        });
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => navLinks.classList.remove('open'));
+        });
+    }
+
+    // Helper: Get saved bookings from localStorage
+    const getBookedSlots = () => {
+        return JSON.parse(localStorage.getItem('protelo_bookings')) || [];
+    };
+
+    // Helper: Save a new booking to localStorage
+    const saveBookedSlot = (bookingData) => {
+        const bookings = getBookedSlots();
+        bookings.push(bookingData);
+        localStorage.setItem('protelo_bookings', JSON.stringify(bookings));
+    };
+
+    // Helper: Cancel/Remove a booking by index
+    const cancelBookedSlot = (indexToRemove) => {
+        const bookings = getBookedSlots();
+        bookings.splice(indexToRemove, 1);
+        localStorage.setItem('protelo_bookings', JSON.stringify(bookings));
+        updateAvailableSlots();
+        renderAdminBookings();
+    };
+
+    // --- EMAIL LOOKUP CANCELLATION LOGIC ON cancel.html ---
+    if (cancelSearchForm) {
+        cancelSearchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const emailQuery = searchEmailInput.value.trim().toLowerCase();
+            const bookings = getBookedSlots();
+
+            const matchedBookings = bookings.filter(b => b.clientEmail && b.clientEmail.toLowerCase() === emailQuery);
+
+            if (matchedBookings.length === 0) {
+                cancelPageContent.innerHTML = `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,155,39,0.3); padding: 1.5rem; border-radius: 4px; margin-top: 1.5rem;">
+                        <h3 style="font-family: 'Cinzel', serif; color: #C59B27; margin-bottom: 0.5rem;">No Reservation Found</h3>
+                        <p style="color: #aaa; margin-bottom: 1rem;">No active bookings were found associated with <strong>${searchEmailInput.value}</strong>.</p>
+                        <a href="book.html" class="btn btn-gold">Book a New Appointment</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Display found bookings matching this email
+            cancelPageContent.innerHTML = `
+                <div style="margin-top: 1.5rem; text-align: left;">
+                    <h3 style="font-family: 'Cinzel', serif; color: #C59B27; margin-bottom: 1rem; text-align: center;">Active Reservations Found</h3>
+                    ${matchedBookings.map((b) => {
+                        const originalIndex = bookings.findIndex(item => item.id === b.id);
+                        return `
+                            <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,155,39,0.3); padding: 1.25rem; border-radius: 4px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                <div>
+                                    <p style="margin: 0.2rem 0; color: #C59B27; font-family: 'Cinzel', serif; font-size: 1.1rem;">${b.date} at ${b.time}</p>
+                                    <p style="margin: 0.2rem 0; color: #F4EFE6; font-size: 0.9rem;"><strong>Client:</strong> ${b.clientName} &bull; <strong>Barber:</strong> ${b.barber}</p>
+                                    <p style="margin: 0.2rem 0; color: #aaa; font-size: 0.85rem;"><strong>Service:</strong> ${b.service || 'Haircut'}</p>
+                                </div>
+                                <button type="button" class="btn-cancel-target" data-index="${originalIndex}" style="background: #8b2626; color: #fff; border: none; padding: 0.6rem 1.2rem; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                                    Cancel Reservation
+                                </button>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            // Attach event listeners to the cancel buttons
+            cancelPageContent.querySelectorAll('.btn-cancel-target').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const indexToCancel = parseInt(btn.getAttribute('data-index'), 10);
+                    const currentBookings = getBookedSlots();
+                    const canceledBooking = currentBookings[indexToCancel];
+
+                    currentBookings.splice(indexToCancel, 1);
+                    localStorage.setItem('protelo_bookings', JSON.stringify(currentBookings));
+
+                    cancelPageContent.innerHTML = `
+                        <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(197,155,39,0.3); padding: 2rem; border-radius: 4px; margin-top: 1.5rem;">
+                            <span style="font-family: 'Cinzel', serif; font-size: 0.85rem; color: #C59B27; letter-spacing: 2px; display: block; margin-bottom: 0.5rem;">RESERVATION CANCELED</span>
+                            <h3 style="font-family: 'Cinzel', serif; color: #F4EFE6; margin-bottom: 0.75rem;">Chair Successfully Released</h3>
+                            <p style="color: #aaa; margin-bottom: 1.5rem;">Your appointment on <strong>${canceledBooking.date} at ${canceledBooking.time}</strong> has been canceled.</p>
+                            <a href="book.html" class="btn btn-gold">Book Another Time</a>
+                        </div>
+                    `;
+                });
+            });
+        });
+    }
+
+    // Render Admin Dashboard Bookings List
+    const renderAdminBookings = () => {
+        if (!adminBookingList) return;
+
+        const bookings = getBookedSlots();
+
+        if (statTotalBookings) statTotalBookings.textContent = bookings.length;
+        if (panelCount) panelCount.textContent = `${bookings.length} total`;
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (statTodayBookings) {
+            statTodayBookings.textContent = bookings.filter(b => b.date === todayStr).length;
+        }
+
+        if (bookings.length === 0) {
+            adminBookingList.innerHTML = `
+                <div style="text-align: center; padding: 4rem 0; color: #888;">
+                    <p style="font-size: 1.1rem; font-family: 'Cinzel', serif; color: #aaa;">No active reservations found.</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.5rem;">When clients book a chair, they will appear here instantly.</p>
+                </div>
+            `;
+            return;
+        }
+
+        adminBookingList.innerHTML = bookings.map((item, idx) => `
+            <div class="booking-card-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(197,155,39,0.25); padding: 1.25rem 1.5rem; margin-bottom: 1rem; border-radius: 4px;">
+                <div>
+                    <div style="font-family: 'Cinzel', serif; font-size: 1.1rem; color: #C59B27; margin-bottom: 0.3rem;">
+                        ${item.date} at ${item.time}
+                    </div>
+                    <div style="font-size: 0.9rem; color: #F4EFE6;">
+                        <strong>Client:</strong> ${item.clientName || 'N/A'} (${item.clientEmail || 'No email'})
+                    </div>
+                    <div style="font-size: 0.85rem; color: #aaa; margin-top: 0.2rem;">
+                        <strong>Barber:</strong> ${item.barber} &bull; <strong>Service:</strong> ${item.service || 'Haircut'}
+                    </div>
+                </div>
+                <button type="button" class="admin-cancel-btn" data-index="${idx}" style="background: #8b2626; color: #fff; border: none; padding: 0.6rem 1.2rem; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px;">
+                    Cancel Slot
+                </button>
+            </div>
+        `).join('');
+
+        adminBookingList.querySelectorAll('.admin-cancel-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const idx = parseInt(btn.getAttribute('data-index'), 10);
+                cancelBookedSlot(idx);
+            });
+        });
+    };
+
+    // Handle Clear All Button on Admin
+    if (clearAllBtn) {
+        clearAllBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all active bookings?')) {
+                localStorage.removeItem('protelo_bookings');
+                renderAdminBookings();
+            }
+        });
+    }
+
+    // Populate only AVAILABLE time slots for chosen barber & date
+    const updateAvailableSlots = () => {
+        if (!bookDate || !bookTime || !selectBarber) return;
+
+        const chosenBarber = selectBarber.value;
+        const chosenDate = bookDate.value;
+        const bookings = getBookedSlots();
+
+        const takenTimes = bookings
+            .filter(b => b.barber === chosenBarber && b.date === chosenDate)
+            .map(b => b.time);
+
+        const availableSlots = ALL_TIME_SLOTS.filter(slot => !takenTimes.includes(slot.value));
+
+        bookTime.innerHTML = '';
+
+        if (availableSlots.length === 0) {
+            const opt = document.createElement('option');
+            opt.value = '';
+            opt.textContent = 'No slots available on this date';
+            bookTime.appendChild(opt);
+            bookTime.disabled = true;
+            if (submitBookingBtn) submitBookingBtn.disabled = true;
+        } else {
+            bookTime.disabled = false;
+            if (submitBookingBtn) submitBookingBtn.disabled = false;
+            availableSlots.forEach(slot => {
+                const opt = document.createElement('option');
+                opt.value = slot.value;
+                opt.textContent = slot.label;
+                bookTime.appendChild(opt);
+            });
+        }
+    };
+
+    // Initialize Date Picker & Slot Filtering
+    if (bookDate) {
+        const today = new Date().toISOString().split('T')[0];
+        bookDate.min = today;
+        bookDate.value = today;
+
+        bookDate.addEventListener('click', () => {
+            if (typeof bookDate.showPicker === 'function') {
+                bookDate.showPicker();
+            }
+        });
+
+        bookDate.addEventListener('change', updateAvailableSlots);
+        if (selectBarber) selectBarber.addEventListener('change', updateAvailableSlots);
+
+        updateAvailableSlots();
+    }
+
+    // Render Admin list if on admin.html
+    renderAdminBookings();
+
+    // Handle Booking Form Submission via EmailJS
+    if (bookingForm) {
+        bookingForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const chosenBarber = selectBarber.value;
+            const chosenDate = bookDate.value;
+            const chosenTime = bookTime.value;
+            const clientName = document.getElementById('clientName').value;
+            const clientEmail = document.getElementById('clientEmail').value;
+            const selectedService = document.getElementById('selectService').value;
+
+            if (!chosenTime) return;
+
+            const bookingId = 'bk_' + Date.now();
+            const folderUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+            const cancelLink = `${folderUrl}/cancel.html`;
+
+            const serviceID = 'service_t5n9il9';
+            const ownerTemplateID = 'template_tk49v6w';
+            const customerTemplateID = 'template_ue7l3ht';
+
+            const templateParams = {
+                client_name: clientName,
+                client_email: clientEmail,
+                barber: chosenBarber,
+                service: selectedService,
+                date: chosenDate,
+                time: chosenTime,
+                cancel_link: cancelLink
+            };
+
+            const finalizeBooking = () => {
+                saveBookedSlot({
+                    id: bookingId,
+                    barber: chosenBarber,
+                    date: chosenDate,
+                    time: chosenTime,
+                    clientName: clientName,
+                    clientEmail: clientEmail,
+                    service: selectedService
+                });
+                updateAvailableSlots();
+                if (submitBookingBtn) {
+                    submitBookingBtn.disabled = false;
+                    submitBookingBtn.textContent = 'Confirm Reservation';
+                }
+                if (bookingModal) bookingModal.classList.add('active');
+            };
+
+            if (typeof emailjs !== 'undefined') {
+                if (submitBookingBtn) {
+                    submitBookingBtn.disabled = true;
+                    submitBookingBtn.textContent = 'Sending Confirmation...';
+                }
+
+                Promise.all([
+                    emailjs.send(serviceID, ownerTemplateID, templateParams),
+                    emailjs.send(serviceID, customerTemplateID, templateParams)
+                ])
+                .then(() => {
+                    finalizeBooking();
+                })
+                .catch((error) => {
+                    console.error('EmailJS Error:', error);
+                    alert('Could not send email notification. Check the browser console for details.');
+                    if (submitBookingBtn) {
+                        submitBookingBtn.disabled = false;
+                        submitBookingBtn.textContent = 'Confirm Reservation';
+                    }
+                });
+            } else {
+                alert('EmailJS library not loaded. Make sure the EmailJS CDN script tag is in book.html.');
+            }
+        });
+    }
+
+    // Handle Contact Form Submission
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (bookingModal) bookingModal.classList.add('active');
+        });
+    }
+
+    // Modal Closing & Redirection to menu.html
+    const hideModal = () => {
+        if (bookingModal) bookingModal.classList.remove('active');
+        window.location.href = 'menu.html';
+    };
+
+    if (closeModal) closeModal.addEventListener('click', hideModal);
+    if (confirmModalBtn) confirmModalBtn.addEventListener('click', hideModal);
+    if (bookingModal) {
+        bookingModal.addEventListener('click', (e) => {
+            if (e.target === bookingModal) hideModal();
+        });
+    }
+});

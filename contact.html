@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | PROTELO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,500;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <header class="navbar scrolled" id="navbar">
+        <div class="container nav-content">
+            <a href="menu.html" class="brand">
+                <svg class="brand-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 48L46 14C48.5 11.5 52.5 11.5 55 14C57.5 16.5 57.5 20.5 55 23L21 57C18.5 59.5 14.5 59.5 12 57C9.5 54.5 9.5 50.5 12 48Z" stroke="#C59B27" stroke-width="2.5"/>
+                    <path d="M16 44L42 18" stroke="#C59B27" stroke-width="1.5" stroke-dasharray="3 3"/>
+                    <path d="M48 16L14 50" stroke="#F4EFE6" stroke-width="1.5"/>
+                    <circle cx="16.5" cy="52.5" r="2" fill="#C59B27"/>
+                    <path d="M8 20L24 36M20 8L36 24" stroke="#C59B27" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <div class="brand-text">
+                    <span class="brand-name">PROTELO</span>
+                    <span class="brand-sub">EST. MCMXXIV</span>
+                </div>
+            </a>
+
+            <nav class="nav-links" id="navLinks">
+                <a href="menu.html">Main Menu</a>
+                <a href="book.html">Book Chair</a>
+                <a href="find.html">Find Us</a>
+                <a href="contact.html" class="active">Contact</a>
+            </nav>
+
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contact Page Content -->
+    <section class="section page-content">
+        <div class="container" style="max-width: 700px;">
+            <div class="section-header center">
+                <span class="section-eyebrow">GET IN TOUCH</span>
+                <h2 class="section-title">Concierge Desk</h2>
+                <div class="gold-divider"><span>✦</span></div>
+                <p class="section-desc">Have a question regarding private events, grooming tonics, or custom appointments? Send us a message.</p>
+            </div>
+
+            <form class="booking-form" id="contactForm">
+                <div class="form-group">
+                    <label for="contactName">Your Name</label>
+                    <input type="text" id="contactName" required placeholder="Lord Alistair">
+                </div>
+
+                <div class="form-group">
+                    <label for="contactEmail">Email Address</label>
+                    <input type="email" id="contactEmail" required placeholder="alistair@estate.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="contactSubject">Subject</label>
+                    <input type="text" id="contactSubject" required placeholder="Private Party Inquiry">
+                </div>
+
+                <div class="form-group">
+                    <label for="contactMessage">Message</label>
+                    <textarea id="contactMessage" rows="5" required placeholder="Write your inquiry here..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 1rem;">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <span class="brand-name">PROTELO</span>
+                <p class="footer-tagline">Classic Barbershop &amp; Apothecary.<br>Craftsmanship without compromise.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Parlor Hours</h4>
+                <ul class="hours-list">
+                    <li><span>Tuesday – Friday</span> <span>09:00 – 20:00</span></li>
+                    <li><span>Saturday</span> <span>09:00 – 18:00</span></li>
+                    <li><span>Sunday – Monday</span> <span>Closed</span></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <p><a href="menu.html">Main Menu</a><br>
+                   <a href="book.html">Book Chair</a><br>
+                   <a href="find.html">Find Us</a><br>
+                   <a href="contact.html">Contact</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; <span id="currentYear"></span> PROTELO BARBERSHOP. ALL RIGHTS RESERVED.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Success Modal -->
+    <div class="modal-backdrop" id="bookingModal" aria-hidden="true">
+        <div class="modal-box">
+            <button class="modal-close" id="closeModal">&times;</button>
+            <span class="section-eyebrow">MESSAGE DISPATCHED</span>
+            <h3>Inquiry Received</h3>
+            <div class="gold-divider"><span>✦</span></div>
+            <p>Thank you for reaching out. Our concierge will respond via email shortly.</p>
+            <button class="btn btn-gold" id="confirmModalBtn">Return to Home</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

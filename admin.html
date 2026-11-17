@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protelo — Shop Management App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* App Layout Styles */
+        :root {
+            --app-bg: #0d0d0d;
+            --sidebar-bg: #141414;
+            --card-bg: #1a1a1a;
+            --border-gold: rgba(197, 155, 39, 0.2);
+            --gold: #C59B27;
+            --text-main: #F4EFE6;
+            --text-muted: #999;
+        }
+
+        body {
+            background-color: var(--app-bg);
+            color: var(--text-main);
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar App Navigation */
+        aside {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-gold);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem 1.5rem;
+        }
+
+        .app-brand h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1.4rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .app-brand span {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0;
+            margin: 2rem 0;
+        }
+
+        .nav-menu li {
+            margin-bottom: 0.75rem;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .nav-menu a:hover, .nav-menu a.active {
+            background: rgba(197, 155, 39, 0.1);
+            color: var(--gold);
+        }
+
+        /* Main Content View */
+        .app-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--app-bg);
+        }
+
+        header.app-header {
+            padding: 1.5rem 2.5rem;
+            border-bottom: 1px solid var(--border-gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--sidebar-bg);
+        }
+
+        .app-content {
+            padding: 2.5rem;
+            max-width: 1200px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* App Dashboard Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-gold);
+            padding: 1.5rem;
+            border-radius: 6px;
+        }
+
+        .stat-card span {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-card h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin: 0.5rem 0 0 0;
+        }
+
+        /* Bookings Table Container */
+        .app-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border-gold);
+            border-radius: 6px;
+            padding: 1.5rem;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-gold);
+        }
+
+        .panel-header h3 {
+            font-family: 'Cinzel', serif;
+            margin: 0;
+            color: var(--text-main);
+            font-size: 1.2rem;
+        }
+
+        /* Responsive Booking Cards */
+        .booking-card-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(197, 155, 39, 0.15);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            transition: border-color 0.2s;
+        }
+
+        .booking-card-item:hover {
+            border-color: var(--gold);
+        }
+
+        .btn-danger-soft {
+            background: rgba(139, 38, 38, 0.15);
+            color: #ff6b6b;
+            border: 1px solid rgba(139, 38, 38, 0.4);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-danger-soft:hover {
+            background: #8b2626;
+            color: #fff;
+        }
+
+        @media(max-width: 768px) {
+            body { flex-direction: column; height: auto; overflow: auto; }
+            aside { width: 100%; height: auto; padding: 1rem; }
+            .app-main { height: auto; overflow: visible; }
+        }
+    </style>
+    <!-- Firebase App & Firestore SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <!-- Sidebar App Navigation -->
+    <aside>
+        <div>
+            <div class="app-brand">
+                <h2>PROTELO</h2>
+                <span>Barbershop OS</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#" class="active">&#9632; Dashboard</a></li>
+                <li><a href="book.html" target="_blank">&#8599; Live Booking Page</a></li>
+                <li><a href="menu.html">&#8962; Main Website</a></li>
+            </ul>
+        </div>
+        <div style="font-size: 0.75rem; color: #666;">
+            System Status: <span style="color: #4CAF50;">● Online</span>
+        </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="app-main">
+        <header class="app-header">
+            <h2 style="font-family: 'Cinzel', serif; font-size: 1.1rem; margin: 0; color: var(--text-main);">Shop Control Center</h2>
+            <button id="clearAllBtn" style="background: transparent; color: #ff6b6b; border: 1px solid rgba(139,38,38,0.5); padding: 0.5rem 1rem; cursor: pointer; font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; border-radius: 4px;">Purge All Slots</button>
+        </header>
+
+        <div class="app-content">
+            <!-- App Metrics / Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span>Active Reservations</span>
+                    <h3 id="statTotalBookings">0</h3>
+                </div>
+                <div class="stat-card">
+                    <span>Today's Appointments</span>
+                    <h3 id="statTodayBookings">0</h3>
+                </div>
+                <div class="stat-card">
+                    <span>System Database</span>
+                    <h3 style="font-size: 1.2rem; margin-top: 0.8rem; color: #aaa;">localStorage</h3>
+                </div>
+            </div>
+
+            <!-- Management Panel -->
+            <div class="app-panel">
+                <div class="panel-header">
+                    <h3>Scheduled Appointments</h3>
+                    <span id="panelCount" style="font-size: 0.85rem; color: var(--gold);">0 total</span>
+                </div>
+
+                <div id="adminBookingList">
+                    <!-- Populated dynamically via script.js -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link your core script -->
+    <script src="script.js"></script>
+</body>
+</html>
